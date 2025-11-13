@@ -10,14 +10,14 @@ data:
       external_labels:
         cluster: 'k3s'
         environment: 'production'
-    
+
     # Alertmanager configuration
     alerting:
       alertmanagers:
         - static_configs:
             - targets:
               - alertmanager.monitoring.svc.cluster.local:9093
-    
+
     # Load alert rules
     rule_files:
       - /etc/prometheus/alerts/*.yml
@@ -42,16 +42,6 @@ data:
           - source_labels: [__meta_kubernetes_endpoint_port_name]
             action: keep
             regex: http
-- job_name: 'node-exporter'
-    kubernetes_sd_configs:
-      - role: endpoints
-        namespaces:
-          names:
-            - monitoring
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
-        action: keep
-        regex: node-exporter-prometheus-node-exporter;metrics
 
       # Scrape RaspberryPi Exporter
       - job_name: 'raspberrypi-exporter'
@@ -69,7 +59,6 @@ data:
             regex: http
 
       # Scrape Traefik metrics
-      # Traefik in k3s typically runs in kube-system namespace
       - job_name: 'traefik'
         kubernetes_sd_configs:
           - role: pod
@@ -83,7 +72,7 @@ data:
           - source_labels: [__meta_kubernetes_pod_ip]
             action: replace
             target_label: __address__
-            replacement: '${1}:8080'
+            replacement: $1:8080
           - source_labels: [__meta_kubernetes_pod_name]
             target_label: pod
           - source_labels: [__meta_kubernetes_namespace]
@@ -148,11 +137,11 @@ data:
           - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
             action: keep
             regex: true
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_port]
+          - source_labels: [__meta_kubernetes_service_cluster_ip, __meta_kubernetes_service_annotation_prometheus_io_port]
             action: replace
-            regex: (.+)
+            regex: (.+);(.+)
+            replacement: $1:$2
             target_label: __address__
-            replacement: $1
           - action: labelmap
             regex: __meta_kubernetes_service_label_(.+)
           - source_labels: [__meta_kubernetes_namespace]
@@ -176,10 +165,10 @@ data:
           module: [http_2xx]
         static_configs:
           - targets:
-            - https://viktutors.com
-            - https://cv.mustaci.com
-            - https://mustaci.com
-            - https://prometheus.mustaci.com
+            - viktutors.com
+            - cv.mustaci.com
+            - mustaci.com
+            - prometheus.mustaci.com
         relabel_configs:
           - source_labels: [__address__]
             target_label: __param_target
@@ -187,4 +176,3 @@ data:
             target_label: instance
           - target_label: __address__
             replacement: blackbox-exporter.monitoring.svc.cluster.local:9115
-
