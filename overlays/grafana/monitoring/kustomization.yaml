@@ -11,9 +11,7 @@ commonAnnotations:
     path: kustomize/overlays/grafana/monitoring
 
 resources:
-  - namespace.yaml
-  - secret.yaml
-  - ../../../base/grafana
   - ingress.yaml
   - dashboard-traefik.yaml
+
 
