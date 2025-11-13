@@ -1,20 +1,29 @@
-replicas: 1
-
 ports:
   web:
     expose:
       default: true
+    nodePort: 30080
   websecure:
     expose:
       default: true
+    nodePort: 30443
   metrics:
     expose:
-      default: false
-
-    # Prometheus will scrape at /metrics
+      service:
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/path: /metrics
+          prometheus.io/port: "9100"
+    nodePort: 30190  # Traefik metrics on this NodePort
 
 metrics:
   prometheus:
     enabled: true
-    entryPoint: metrics
-    # You can change the port if you want
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9100"
+
+service:
+  type: NodePort
