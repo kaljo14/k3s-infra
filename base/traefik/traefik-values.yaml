@@ -2,11 +2,11 @@ ports:
   web:
     port: 80
     expose:
-      hostPort: 80       # bind directly to host port
+      hostPort: 80   # optional, only needed if you want direct access outside tunnel
   websecure:
     port: 443
     expose:
-      hostPort: 443      # optional if you use TLS
+      hostPort: 443  # optional
   metrics:
     port: 9100
     expose:
@@ -16,16 +16,18 @@ ports:
           prometheus.io/scrape: "true"
           prometheus.io/path: /metrics
           prometheus.io/port: "9100"
-    nodePort: 30190
+    nodePort: 30190 
 
 metrics:
   prometheus:
     enabled: true
     service:
+      type: NodePort  
+      nodePort: 30190
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "9100"
 
 service:
-  type: ClusterIP      
+  type: NodePort  # allows outside scraping
