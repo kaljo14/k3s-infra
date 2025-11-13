@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
+  namespace: monitoring
 data:
   prometheus.yml: |
     global:
@@ -36,27 +37,14 @@ data:
               names:
                 - monitoring
         relabel_configs:
+          # Only scrape the node-exporter service deployed via Helm
           - source_labels: [__meta_kubernetes_service_name]
             action: keep
-            regex: node-exporter
+            regex: node-exporter-prometheus-node-exporter
+          # Only scrape the metrics port
           - source_labels: [__meta_kubernetes_endpoint_port_name]
             action: keep
-            regex: http
-
-      # Scrape RaspberryPi Exporter
-      - job_name: 'raspberrypi-exporter'
-        kubernetes_sd_configs:
-          - role: endpoints
-            namespaces:
-              names:
-                - monitoring
-        relabel_configs:
-          - source_labels: [__meta_kubernetes_service_name]
-            action: keep
-            regex: raspberrypi-exporter
-          - source_labels: [__meta_kubernetes_endpoint_port_name]
-            action: keep
-            regex: http
+            regex: metrics
 
       # Scrape Traefik metrics
       - job_name: 'traefik'
