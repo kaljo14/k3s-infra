@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: personal-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: personal-website
+  template:
+    metadata:
+      labels:
+        app: personal-website
+    spec:
+      containers:
+        - name: personal-website
+          image: kaljo14/personal_resume@sha256:307ff07a3221aa31b982d79e8ef85cf78ecd1756cb25919ec3e5e35be974d50a
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 30
+

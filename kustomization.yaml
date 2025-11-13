@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Root kustomization that includes all apps
+# Deploy all: kubectl apply -k .
+# Deploy specific app: kubectl apply -k ./overlays/grafana/monitoring
+
+resources:
+  - overlays/grafana/monitoring
+  - overlays/viktutors/viktutors
+  - overlays/resume/default
+  - overlays/emailer/emailer
+  - overlays/prometheus/monitoring
+  - overlays/blackbox-exporter/monitoring
+  - overlays/alertmanager/monitoring

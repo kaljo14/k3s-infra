@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: monitoring
+
+commonLabels:
+  part-of: monitoring
+
+commonAnnotations:
+  config.kubernetes.io/origin: |
+    path: kustomize/overlays/prometheus/monitoring
+
+resources:
+  - serviceaccount.yaml
+  - ../../../base/prometheus
+  - ../../../base/node-exporter
+  - ingress.yaml
+
+patches:
+  - target:
+      kind: Deployment
+      name: prometheus
+    patch: |-
+      - op: add
+        path: /spec/template/spec/serviceAccountName
+        value: prometheus
+

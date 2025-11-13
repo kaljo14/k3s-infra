@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailer-deployment
+  labels:
+    app: emailer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emailer
+  template:
+    metadata:
+      labels:
+        app: emailer
+    spec:
+      containers:
+        - name: emailer
+          image: kaljo14/emailer@sha256:0feebf91e924803eb1de948678f84e1f2e6a305231af66d6e2a51945fc7b7c0f
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: app-secrets
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 30
+

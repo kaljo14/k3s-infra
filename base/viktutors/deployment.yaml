@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: viktutors-website
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: viktutors-website
+  template:
+    metadata:
+      labels:
+        app: viktutors-website
+    spec:
+      containers:
+        - name: viktutors-website
+          image: kaljo14/vtutoring@sha256:60aad09a6006b8cf3ce9d44d34d7de430e54bb93d95e05c9473cf26e57861f62
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 30
+
