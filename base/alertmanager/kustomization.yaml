@@ -3,7 +3,6 @@ kind: Kustomization
 
 commonLabels:
   app: alertmanager
-  managed-by: kustomize
 
 resources:
   - pvc.yaml

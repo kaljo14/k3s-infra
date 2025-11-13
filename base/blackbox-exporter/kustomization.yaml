@@ -3,7 +3,6 @@ kind: Kustomization
 
 commonLabels:
   app: blackbox-exporter
-  managed-by: kustomize
 
 resources:
   - configmap.yaml

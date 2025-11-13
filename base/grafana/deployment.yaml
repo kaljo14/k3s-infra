@@ -20,7 +20,7 @@ spec:
         fsGroup: 472
       containers:
         - name: grafana
-          image: grafana/grafana:11.2.0 # ✅ Pin to stable version, not latest
+          image: grafana/grafana@sha256:34ec40f215980c8eb3e4320beb062a494d067c5c81807c0194ca996e8a8eb7a4
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
