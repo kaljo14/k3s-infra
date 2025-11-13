@@ -1,17 +1,12 @@
-# traefik-values.yaml
 ports:
   web:
     port: 80
     expose:
-      service:
-        enabled: true
-    nodePort: 30080
+      hostPort: 80       # bind directly to host port
   websecure:
     port: 443
     expose:
-      service:
-        enabled: true
-    nodePort: 30443
+      hostPort: 443      # optional if you use TLS
   metrics:
     port: 9100
     expose:
@@ -33,12 +28,4 @@ metrics:
         prometheus.io/port: "9100"
 
 service:
-  type: NodePort
-
-entryPoints:
-  web:
-    address: ":80"
-  websecure:
-    address: ":443"
-  metrics:
-    address: ":9100"
+  type: ClusterIP      
