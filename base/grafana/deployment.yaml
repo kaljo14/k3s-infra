@@ -71,7 +71,10 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards
               readOnly: true
             - name: grafana-dashboards
-              mountPath: /var/lib/grafana/dashboards
+              mountPath: /var/lib/grafana/dashboards/traefik
+              readOnly: true
+            - name: grafana-dashboard-rpi
+              mountPath: /var/lib/grafana/dashboards/rpi
               readOnly: true
       volumes:
         - name: grafana-storage
@@ -86,3 +89,6 @@ spec:
         - name: grafana-dashboards
           configMap:
             name: grafana-dashboard-traefik
+        - name: grafana-dashboard-rpi
+          configMap:
+            name: grafana-dashboard-rpi

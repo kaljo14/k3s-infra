@@ -42,6 +42,31 @@ data:
           - source_labels: [__meta_kubernetes_endpoint_port_name]
             action: keep
             regex: http
+- job_name: 'node-exporter'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - monitoring
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: node-exporter-prometheus-node-exporter;metrics
+
+      # Scrape RaspberryPi Exporter
+      - job_name: 'raspberrypi-exporter'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - monitoring
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: raspberrypi-exporter
+          - source_labels: [__meta_kubernetes_endpoint_port_name]
+            action: keep
+            regex: http
 
       # Scrape Traefik metrics
       # Traefik in k3s typically runs in kube-system namespace
