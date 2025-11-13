@@ -2,11 +2,11 @@ ports:
   web:
     port: 80
     expose:
-      hostPort: 80   # optional, only needed if you want direct access outside tunnel
+      hostPort: 80   # binds Traefik to localhost:80
   websecure:
     port: 443
     expose:
-      hostPort: 443  # optional
+      hostPort: 443  # binds Traefik to localhost:443
   metrics:
     port: 9100
     expose:
@@ -16,18 +16,16 @@ ports:
           prometheus.io/scrape: "true"
           prometheus.io/path: /metrics
           prometheus.io/port: "9100"
-    nodePort: 30190 
 
 metrics:
   prometheus:
     enabled: true
     service:
-      type: NodePort  
-      nodePort: 30190
+      type: ClusterIP  # internal scraping only
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
         prometheus.io/port: "9100"
 
 service:
-  type: NodePort  # allows outside scraping
+  type: ClusterIP  # web service internal, hostPort handles external access
