@@ -1,0 +1,21 @@
+replicas: 1
+
+ports:
+  web:
+    expose: true
+    port: 80
+    nodePort: 31665
+  websecure:
+    expose: true
+    port: 443
+    nodePort: 32010
+  metrics:
+    port: 9100
+    expose: true
+    # Prometheus will scrape at /metrics
+
+metrics:
+  prometheus:
+    enabled: true
+    entryPoint: metrics
+    # You can change the port if you want
