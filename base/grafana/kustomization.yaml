@@ -5,6 +5,7 @@ commonLabels:
   app: grafana
 
 resources:
+  - pvc.yaml
   - deployment.yaml
   - service.yaml
   - datasource.yaml
