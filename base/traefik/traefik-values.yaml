@@ -27,5 +27,11 @@ metrics:
         prometheus.io/path: /metrics
         prometheus.io/port: "9100"
 
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik
+
+
 service:
   type: ClusterIP  # web service internal, hostPort handles external access
