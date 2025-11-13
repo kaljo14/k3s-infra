@@ -1,17 +1,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-node
+  name: grafana-dashboard-pi
   namespace: monitoring
   labels:
     grafana_dashboard: "1"
 data:
-  node_dashboard.json: |
+  pi_dashboard.json: |
     {
       "id": null,
-      "uid": "node_dashboard",
-      "title": "Node Exporter Overview",
-      "tags": ["k3s", "node", "pi"],
+      "uid": "pi_dashboard",
+      "title": "Raspberry Pi Overview",
+      "tags": ["raspberrypi", "k3s", "node"],
       "timezone": "browser",
       "schemaVersion": 36,
       "version": 1,
@@ -24,108 +24,62 @@ data:
           "datasource": "${ds_prometheus}",
           "targets": [
             {
-              "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode='idle', instance='$node'}[5m])) * 100)",
+              "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode='idle'}[5m])) * 100)",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
           ],
           "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
           "lines": true,
-          "linewidth": 2,
-          "yaxes": [
-            { "format": "percent", "min": 0, "max": 100 },
-            { "format": "short" }
-          ]
+          "yaxes": [{ "format": "percent", "min": 0, "max": 100 }, {"format": "short"}]
         },
         {
           "type": "graph",
-          "title": "Memory Usage",
+          "title": "CPU Temperature",
           "id": 2,
           "datasource": "${ds_prometheus}",
           "targets": [
             {
-              "expr": "(node_memory_MemTotal_bytes{instance='$node'} - node_memory_MemAvailable_bytes{instance='$node'}) / node_memory_MemTotal_bytes{instance='$node'} * 100",
+              "expr": "node_thermal_zone_temp{zone='cpu-thermal'}",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
           ],
           "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
           "lines": true,
-          "linewidth": 2,
-          "yaxes": [
-            { "format": "percent", "min": 0, "max": 100 },
-            { "format": "short" }
-          ]
+          "yaxes": [{ "format": "celsius", "min": 0, "max": 100 }, {"format": "short"}]
         },
         {
           "type": "graph",
-          "title": "Root Filesystem Usage",
+          "title": "Memory Usage",
           "id": 3,
           "datasource": "${ds_prometheus}",
           "targets": [
             {
-              "expr": "(node_filesystem_size_bytes{instance='$node', mountpoint='/'} - node_filesystem_avail_bytes{instance='$node', mountpoint='/'}) / node_filesystem_size_bytes{instance='$node', mountpoint='/'} * 100",
+              "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
               "legendFormat": "{{instance}}",
               "refId": "A"
             }
           ],
           "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
           "lines": true,
-          "linewidth": 2,
-          "yaxes": [
-            { "format": "percent", "min": 0, "max": 100 },
-            { "format": "short" }
-          ]
+          "yaxes": [{ "format": "percent", "min": 0, "max": 100 }, {"format": "short"}]
         },
         {
           "type": "graph",
-          "title": "Disk IO (Read/Write)",
+          "title": "CPU Throttled / Under-voltage Flags",
           "id": 4,
           "datasource": "${ds_prometheus}",
           "targets": [
             {
-              "expr": "rate(node_disk_read_bytes_total{instance='$node'}[5m])",
-              "legendFormat": "Read {{instance}}",
+              "expr": "vcgencmd_throttled",
+              "legendFormat": "{{instance}}",
               "refId": "A"
-            },
-            {
-              "expr": "rate(node_disk_written_bytes_total{instance='$node'}[5m])",
-              "legendFormat": "Write {{instance}}",
-              "refId": "B"
             }
           ],
           "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
           "lines": true,
-          "linewidth": 2,
-          "yaxes": [
-            { "format": "bytes", "min": 0 },
-            { "format": "short" }
-          ]
-        },
-        {
-          "type": "graph",
-          "title": "Network Traffic",
-          "id": 5,
-          "datasource": "${ds_prometheus}",
-          "targets": [
-            {
-              "expr": "rate(node_network_receive_bytes_total{instance='$node'}[5m])",
-              "legendFormat": "Receive {{instance}}",
-              "refId": "A"
-            },
-            {
-              "expr": "rate(node_network_transmit_bytes_total{instance='$node'}[5m])",
-              "legendFormat": "Transmit {{instance}}",
-              "refId": "B"
-            }
-          ],
-          "gridPos": { "x": 0, "y": 16, "w": 24, "h": 8 },
-          "lines": true,
-          "linewidth": 2,
-          "yaxes": [
-            { "format": "bytes", "min": 0 },
-            { "format": "short" }
-          ]
+          "yaxes": [{ "format": "short", "min": 0 }, {"format": "short"}]
         }
       ],
       "templating": {
